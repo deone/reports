@@ -25,7 +25,7 @@ SECRET_KEY = '9r@gny=(qq4@dbub=#x0399#*59p-b7w0^36$(@0@@25@kne&9'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['reports-deone.c9users.io']
 
 
 # Application definition
