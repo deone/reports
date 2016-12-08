@@ -1,3 +1,6 @@
 from django.shortcuts import render
 
-# Create your views here.
+import requests
+
+def index(request):
+    print 'me'
