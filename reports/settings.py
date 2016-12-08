@@ -119,3 +119,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.10/howto/static-files/
 
 STATIC_URL = '/static/'
+
+# Vend APIs
+VENDOR_URL = 'http://vendor-deone.c9users.io'
+VEND_VENDORS_URL = VENDOR_URL + '/vends/vendors/'
