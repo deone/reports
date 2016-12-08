@@ -7,8 +7,9 @@ import requests
 
 def index(request):
     response = requests.get(settings.VEND_VENDORS_URL).json()
-    vendors = get_collection('vendors')
-    vendor = {"phone_number": "0231802940", "name": "Ruben Mawuji", "company_name": "Spectra Wireless"}
-    vendor_id = vendors.insert_one(vendor).inserted_id
-    print vendor_id
+    vendors = response['results']
+
+    vendor_collection = get_collection('vendors')
+    result = vendor_collection.insert_many(vendors)
+    print result.inserted_ids
     return JsonResponse({'status': 'ok'})
