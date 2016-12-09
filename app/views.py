@@ -20,11 +20,8 @@ def index(request):
     
     # Create CSV file
     file_name = '%s_%s_%s_%s.%s' % ('Vend_Report', str(now.day), str(now.month), str(now.year), 'csv')
-    voucher_values_line = 'Vendor Name,Vendor Company,'
-    for element in voucher_values:
-        voucher_values_line += str(element) + ','
-    voucher_values_line = voucher_values_line[:-1] + '\n'
-
+    voucher_values_line = '%s%s%s' % ('Vendor Name,Vendor Company,', ','.join([str(x) for x in voucher_values]), '\n')
+    
     with open(file_name, 'a') as f:
         f.write(voucher_values_line)
         for vendor in vendors:
