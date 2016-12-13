@@ -65,6 +65,7 @@ def index(request):
         'message': 'Test Message',
         'sender': 'incisiaappmailer@gmail.com',
         'recipients': ['alwaysdeone@gmail.com'],
+        'file': 'http://reports-deone.c9users.io/static/files/Vend_Report_9_12_2016.csv'
     })
 
     return JsonResponse({'status': 'ok'})
