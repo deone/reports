@@ -120,6 +120,11 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-# Vend APIs
+# APIs
+
+# vends
 VENDOR_URL = 'http://vendor-deone.c9users.io'
 VENDOR_VENDORS_URL = VENDOR_URL + '/vends/vendors/'
+
+# messaging
+MESSAGING_URL = 'http://messaging-deone.c9users.io'

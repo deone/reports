@@ -56,9 +56,15 @@ def index(request):
             f.write(line)
 
     # Insert into database
-    vendor_collection = get_collection('vendors')
-    result = vendor_collection.insert_many(vendors)
+    # vendor_collection = get_collection('vendors')
+    # result = vendor_collection.insert_many(vendors)
 
     # Send email
+    requests.get(settings.MESSAGING_URL, params={
+        'subject': 'Test Subject',
+        'message': 'Test Message',
+        'sender': 'incisiaappmailer@gmail.com',
+        'recipients': ['alwaysdeone@gmail.com'],
+    })
 
     return JsonResponse({'status': 'ok'})
