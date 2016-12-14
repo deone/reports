@@ -5,6 +5,7 @@ from django.utils import timezone
 from utils import get_collection
 
 import requests
+import os
 
 def index(request):
     response = requests.get(settings.VENDOR_VENDORS_URL).json()
@@ -28,9 +29,12 @@ def index(request):
     }) for vendor in vendors]
     
     # Create CSV file
+    path = os.path.join(settings.STATICFILES_DIRS[0], 'files')
     file_name = '%s_%s_%s_%s.%s' % (
         'Vend_Report', str(now.day), str(now.month), str(now.year), 'csv'
         )
+
+    file = os.path.join(path, file_name)
 
     header = '%s%s%s%s%s\n' % (
         'Vendor Name,',
@@ -40,7 +44,7 @@ def index(request):
         ',Total Vend Count'
         )
     
-    with open(file_name, 'a') as f:
+    with open(file, 'w') as f:
         f.write(header)
         for vendor in vendors:
             vend_count = vendor['vend_count']
@@ -60,12 +64,13 @@ def index(request):
     # result = vendor_collection.insert_many(vendors)
 
     # Send email
+    url = request.build_absolute_uri()
     requests.get(settings.MESSAGING_URL, params={
         'subject': 'Test Subject',
         'message': 'Test Message',
         'sender': 'incisiaappmailer@gmail.com',
         'recipients': ['alwaysdeone@gmail.com'],
-        'file': 'http://reports-deone.c9users.io/static/files/Vend_Report_9_12_2016.csv'
+        'file': url + 'static/files/' + file_name,
     })
 
     return JsonResponse({'status': 'ok'})
