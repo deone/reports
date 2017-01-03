@@ -56,7 +56,7 @@ def index(request):
 
             sales = Decimal(vendor['total_vend_value'])
             bonus = revenue = sales / 2
-            commission = sales / 10
+            commission = (sales - bonus) / 10
             net_revenue = revenue - commission
 
             line = '%s,%s,%s,%s,%s,%s,%s,%s\n' % (
