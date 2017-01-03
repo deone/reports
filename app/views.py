@@ -4,6 +4,7 @@ from django.utils import timezone
 
 from utils import get_collection
 
+from decimal import Decimal
 import requests
 import os
 
@@ -36,12 +37,15 @@ def index(request):
 
     file = os.path.join(path, file_name)
 
-    header = '%s%s%s%s%s\n' % (
+    header = '%s%s%s%s%s%s%s%s\n' % (
         'Vendor Name,',
         'Vendor Company,',
         ','.join([str(value) for value in voucher_values]),
         ',Total Vend Count',
-        ',Total Vend Value (GHS)'
+        ',Total Vend Value (GHS)',
+        ',Bonus',
+        ',Commission',
+        ',Net Revenue'
         )
     
     with open(file, 'w') as f:
@@ -49,12 +53,21 @@ def index(request):
         for vendor in vendors:
             vend_count = vendor['vend_count']
             vend_count_string = ','.join([str(elem['count']) for elem in vend_count])
-            line = '%s,%s,%s,%s,%s\n' % (
+
+            sales = Decimal(vendor['total_vend_value'])
+            bonus = revenue = sales / 2
+            commission = sales / 10
+            net_revenue = revenue - commission
+
+            line = '%s,%s,%s,%s,%s,%s,%s,%s\n' % (
                 vendor['name'],
                 vendor['company_name'],
                 vend_count_string,
                 vendor['total_vend_count'],
-                vendor['total_vend_value']
+                str(sales),
+                str(bonus),
+                str(commission),
+                str(net_revenue)
                 )
 
             f.write(line)
