@@ -40,8 +40,8 @@ def index(request):
         'Vendor Name,',
         'Vendor Company,',
         ','.join([str(value) for value in voucher_values]),
-        ',Total Vend Value',
-        ',Total Vend Count'
+        ',Total Vend Count',
+        ',Total Vend Value (GHS)'
         )
     
     with open(file, 'w') as f:
@@ -53,8 +53,8 @@ def index(request):
                 vendor['name'],
                 vendor['company_name'],
                 vend_count_string,
-                vendor['total_vend_value'],
-                vendor['total_vend_count']
+                vendor['total_vend_count'],
+                vendor['total_vend_value']
                 )
 
             f.write(line)
@@ -64,13 +64,13 @@ def index(request):
     # result = vendor_collection.insert_many(vendors)
 
     # Send email
-    url = request.build_absolute_uri()
+    """ url = request.build_absolute_uri()
     requests.get(settings.MESSAGING_URL, params={
         'subject': 'Test Subject',
         'message': 'Test Message',
         'sender': 'incisiaappmailer@gmail.com',
         'recipients': ['alwaysdeone@gmail.com'],
         'file': url + 'static/files/' + file_name,
-    })
+    }) """
 
     return JsonResponse({'status': 'ok'})
