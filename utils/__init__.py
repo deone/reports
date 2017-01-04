@@ -6,9 +6,50 @@ from pymongo import MongoClient
 import requests
 
 import os
-from decimal import Decimal
+import datetime
 
-def create_file(service, date):
+from decimal import Decimal
+from collections import OrderedDict
+
+def validate_date(year=None, month=None, day=None):
+    if year:
+        year = int(year)
+    if month:
+        month = int(month)
+    if day:
+        day = int(day)
+
+    now = timezone.now()
+    date = OrderedDict()
+
+    # URL contains only year
+    if month is None and day is None and year:
+        if year > now.year:
+            return JsonResponse({'code': 500, 'message': 'Invalid year.'})
+        else:
+            date['year'] = year
+
+    # URL contains year and month
+    elif day is None and month and year:
+        if year > now.year or month > now.month:
+            return JsonResponse({'code': 500, 'message': 'Invalid year or month.'})
+        else:
+            date['month'] = month
+            date['year'] = year
+
+    # URL contains year, month and day
+    elif year and month and day:
+        date_supplied = datetime.date(year, month, day)
+        if date_supplied > now.date():
+            return JsonResponse({'code': 500, 'message': 'Invalid date.'})
+        else:
+            date['day'] = day
+            date['month'] = month
+            date['year'] = year
+
+    return date
+
+def create_file(service, date=None, _from=None, to=None):
     # Create CSV file
     now = timezone.now()
     path = os.path.join(settings.STATICFILES_DIRS[0], 'files')
@@ -20,7 +61,7 @@ def create_file(service, date):
 
     return os.path.join(path, file_name)
 
-def vends_reporter(date):
+def vends_reporter(date=None, _from=None, to=None):
     url = settings.VENDOR_VENDS_URL
     response = requests.get(url, params=date).json()
 
@@ -98,9 +139,11 @@ REPORT_HANDLERS = {
     'vends': vends_reporter,
 }
 
-def create_and_send_report(request, service, date):
+def create_and_send_report(request, service, date=None, _from=None, to=None):
     report = REPORT_HANDLERS[service]
-    file_name = report(date)
+
+    if date:
+        file_name = report(date=date)
     # send_report(request, file_name)
 
 def get_collection(collection_name):
