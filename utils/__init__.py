@@ -12,9 +12,11 @@ def create_file(service, date):
     # Create CSV file
     now = timezone.now()
     path = os.path.join(settings.STATICFILES_DIRS[0], 'files')
-    file_name = '%s_%s_%s_%s.%s' % (
-        'Vend_Report', str(now.day), str(now.month), str(now.year), 'csv'
-        )
+
+    file_name = service
+    if date:
+        file_name += '_' + ''.join(['%s-' % value for value in date.values()])[:-1]
+        file_name += '.csv'
 
     return os.path.join(path, file_name)
 
