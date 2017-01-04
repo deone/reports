@@ -61,14 +61,26 @@ def create_file(service, date=None, _from=None, to=None):
 
     file_name = service
     if date:
-        file_name += '_' + ''.join(['%s-' % value for value in date.values()])[:-1]
-        file_name += '.csv'
+        file_name += '_'
+        file_name += ''.join(['%s-' % value for value in date.values()])[:-1]
+    else:
+        file_name += '_'
+        file_name += ''.join(['%s-' % v for v in _from.split('-')[::-1]])[:-1]
+        file_name += '_to_'
+        file_name += ''.join(['%s-' % v for v in to.split('-')[::-1]])[:-1]
 
+    file_name += '.csv'
     return os.path.join(path, file_name)
 
 def vends_reporter(date=None, _from=None, to=None):
     url = settings.VENDOR_VENDS_URL
-    response = requests.get(url, params=date).json()
+
+    if date:
+        response = requests.get(url, params=date).json()
+        file = create_file('vends', date=date)
+    else:
+        response = requests.get(url, params={'from': _from, 'to': to}).json()
+        file = create_file('vends', _from=_from, to=to)
 
     vendors = response['results']['vendors']
     voucher_values = response['results']['voucher_values']
@@ -84,8 +96,6 @@ def vends_reporter(date=None, _from=None, to=None):
     [vendor.update({
         'total_vend_count': sum([vc['count'] for vc in vendor['vend_count']])
     }) for vendor in vendors]
-
-    file = create_file('vends', date)
 
     header = '%s%s%s%s%s%s%s%s\n' % (
         'Vendor Name,',
@@ -149,6 +159,9 @@ def create_and_send_report(request, service, date=None, _from=None, to=None):
 
     if date:
         file_name = report(date=date)
+    else:
+        file_name = report(_from=_from, to=to)
+
     # send_report(request, file_name)
 
 def get_collection(collection_name):
