@@ -30,14 +30,14 @@ def validate_date(year=None, month=None, day=None):
     # URL contains only year
     if month is None and day is None and year:
         if year > now.year:
-            return JsonResponse({'code': 500, 'message': 'Invalid year.'})
+            raise ValueError('Invalid year.')
         else:
             date['year'] = year
 
     # URL contains year and month
     elif day is None and month and year:
         if year > now.year or month > now.month:
-            return JsonResponse({'code': 500, 'message': 'Invalid year or month.'})
+            raise ValueError('Invalid year or month.')
         else:
             date['month'] = month
             date['year'] = year
@@ -46,7 +46,7 @@ def validate_date(year=None, month=None, day=None):
     elif year and month and day:
         date_supplied = datetime.date(year, month, day)
         if date_supplied > now.date():
-            return JsonResponse({'code': 500, 'message': 'Invalid date.'})
+            raise ValueError('Invalid date.')
         else:
             date['day'] = day
             date['month'] = month
