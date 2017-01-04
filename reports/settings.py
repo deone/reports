@@ -128,7 +128,7 @@ STATIC_ROOT = os.path.join(BASE_DIR, "static_live")
 
 # vends
 VENDOR_URL = 'http://vendor-deone.c9users.io'
-VENDOR_VENDORS_URL = VENDOR_URL + '/vends/vendors/'
+VENDOR_VENDS_URL = VENDOR_URL + '/vends'
 
 # messaging
 MESSAGING_URL = 'http://messaging-deone.c9users.io'
