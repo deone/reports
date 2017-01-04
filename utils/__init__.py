@@ -11,6 +11,11 @@ import datetime
 from decimal import Decimal
 from collections import OrderedDict
 
+def validate_stringify_date(date):
+    year, month, day = tuple(date.split('-'))
+    dct = validate_date(year, month, day)
+    return ''.join(['%s-' % value for value in reversed(dct.values())])[:-1]
+
 def validate_date(year=None, month=None, day=None):
     if year:
         year = int(year)
