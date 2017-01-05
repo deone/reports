@@ -6,17 +6,16 @@ from pymongo import MongoClient
 import requests
 
 import os
-import datetime
 
 from decimal import Decimal
 from collections import OrderedDict
 
-def validate_stringify_date(date):
+def order_stringify_date(date):
     year, month, day = tuple(date.split('-'))
-    dct = validate_date(year, month, day)
+    dct = order_date(year, month, day)
     return ''.join(['%s-' % value for value in reversed(dct.values())])[:-1]
 
-def validate_date(year=None, month=None, day=None):
+def order_date(year=None, month=None, day=None):
     if year:
         year = int(year)
     if month:
@@ -24,41 +23,26 @@ def validate_date(year=None, month=None, day=None):
     if day:
         day = int(day)
 
-    now = timezone.now()
     date = OrderedDict()
 
     # URL contains only year
     if month is None and day is None and year:
-        if year > now.year:
-            raise ValueError('Invalid year.')
-        else:
-            date['year'] = year
+        date['year'] = year
 
     # URL contains year and month
     elif day is None and month and year:
-        if year > now.year or month > now.month:
-            raise ValueError('Invalid year or month.')
-        else:
-            date['month'] = month
-            date['year'] = year
+        date['month'] = month
+        date['year'] = year
 
     # URL contains year, month and day
     elif year and month and day:
-        date_supplied = datetime.date(year, month, day)
-        if date_supplied > now.date():
-            raise ValueError('Invalid date.')
-        else:
-            date['day'] = day
-            date['month'] = month
-            date['year'] = year
+        date['day'] = day
+        date['month'] = month
+        date['year'] = year
 
     return date
 
-def create_file(service, date=None, _from=None, to=None):
-    # Create CSV file
-    now = timezone.now()
-    path = os.path.join(settings.STATICFILES_DIRS[0], 'files')
-
+def create_file_name(service, date=None, _from=None, to=None):
     file_name = service
     if date:
         file_name += '_'
@@ -70,17 +54,17 @@ def create_file(service, date=None, _from=None, to=None):
         file_name += ''.join(['%s-' % v for v in to.split('-')[::-1]])[:-1]
 
     file_name += '.csv'
-    return os.path.join(path, file_name)
+    return file_name
 
 def vends_reporter(date=None, _from=None, to=None):
     url = settings.VENDOR_VENDS_URL
 
     if date:
         response = requests.get(url, params=date).json()
-        file = create_file('vends', date=date)
+        file_name = create_file_name('vends', date=date)
     else:
         response = requests.get(url, params={'from': _from, 'to': to}).json()
-        file = create_file('vends', _from=_from, to=to)
+        file_name = create_file_name('vends', _from=_from, to=to)
 
     vendors = response['results']['vendors']
     voucher_values = response['results']['voucher_values']
@@ -107,6 +91,9 @@ def vends_reporter(date=None, _from=None, to=None):
         ',Commission',
         ',Net Revenue'
         )
+
+    path = os.path.join(settings.STATICFILES_DIRS[0], 'files')
+    file = os.path.join(path, file_name)
 
     with open(file, 'w') as f:
         f.write(header)
@@ -136,19 +123,18 @@ def vends_reporter(date=None, _from=None, to=None):
     # vendor_collection = get_collection('vendors')
     # result = vendor_collection.insert_many(vendors)
 
-    return file
+    return file_name
 
 def send_report(request, file):
-    pass
     # Send email
-    """ url = request.build_absolute_uri()
+    url = request.build_absolute_uri()
     requests.get(settings.MESSAGING_URL, params={
         'subject': 'Test Subject',
         'message': 'Test Message',
         'sender': 'incisiaappmailer@gmail.com',
         'recipients': ['alwaysdeone@gmail.com'],
         'file': url + file,
-    }) """
+    })
 
 REPORT_HANDLERS = {
     'vends': vends_reporter,
@@ -162,6 +148,9 @@ def create_and_send_report(request, service, date=None, _from=None, to=None):
     else:
         file_name = report(_from=_from, to=to)
 
+    # print request.build_absolute_uri()
+    print settings.STATIC_URL
+    print file_name
     # send_report(request, file_name)
 
 def get_collection(collection_name):
