@@ -125,13 +125,17 @@ def vends_reporter(date=None, _from=None, to=None):
 
     return file_name
 
-def send_report(_file):
+def send_report(service, _file):
+    subject_and_body = settings.EMAIL_SUBJECT_AND_BODY[service]
+    subject = subject_and_body['subject']
+    body = subject_and_body['body']
+
     # Send email
     response = requests.get(settings.MESSAGING_URL, params={
-        'subject': 'Test Subject',
-        'message': 'Test Message',
-        'sender': 'incisiaappmailer@gmail.com',
-        'recipients': ['alwaysdeone@gmail.com'],
+        'subject': subject,
+        'message': body,
+        'sender': settings.DEFAULT_FROM_EMAIL,
+        'recipients': settings.TO,
         'file': _file,
     })
 

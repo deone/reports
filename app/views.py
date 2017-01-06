@@ -14,12 +14,12 @@ def get_report(request, service, year=None, month=None, day=None):
     date = order_date(year=year, month=month, day=day)
 
     _file = create_report(request.get_host(), service, date)
-    response = send_report(_file)
+    response = send_report(service, _file)
 
     return error_or_success_message(response.status_code, response.reason)
 
 def get_report_by_date_range(request, service, _from, to):
     _file = create_report(request.get_host(), service, _from=order_stringify_date(_from), to=order_stringify_date(to))
-    response = send_report(_file)
+    response = send_report(service, _file)
 
     return error_or_success_message(response.status_code, response.reason)

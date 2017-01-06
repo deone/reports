@@ -132,3 +132,11 @@ VENDOR_VENDS_URL = VENDOR_URL + '/vends'
 
 # messaging
 MESSAGING_URL = 'http://messaging-deone.c9users.io'
+TO = ['alwaysdeone@gmail.com']
+DEFAULT_FROM_EMAIL = 'Spectra Reporter<incisiaappmailer@gmail.com>'
+EMAIL_SUBJECT_AND_BODY = {
+    'vends': {
+        'subject': 'Vend Report',
+        'body': 'Hello,\n\nPlease find vend report attached.\n\nRegards.'
+    }
+}
