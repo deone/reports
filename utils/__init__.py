@@ -92,8 +92,7 @@ def vends_reporter(date=None, _from=None, to=None):
         ',Net Revenue'
         )
 
-    path = os.path.join(settings.STATICFILES_DIRS[0], 'files')
-    _file = os.path.join(path, file_name)
+    _file = os.path.join(settings.MEDIA_ROOT, file_name)
 
     with open(_file, 'w') as f:
         f.write(header)
@@ -153,7 +152,7 @@ def create_report(host, service, date=None, _from=None, to=None):
     else:
         file_name = report(_from=_from, to=to)
 
-    _file = '%s%s%s%s%s' % ('http://', host, settings.STATIC_URL, 'files/', file_name)
+    _file = '%s%s%s%s' % ('http://', host, settings.MEDIA_URL, file_name)
     return _file
 
 def get_collection(collection_name):
