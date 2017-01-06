@@ -93,9 +93,9 @@ def vends_reporter(date=None, _from=None, to=None):
         )
 
     path = os.path.join(settings.STATICFILES_DIRS[0], 'files')
-    file = os.path.join(path, file_name)
+    _file = os.path.join(path, file_name)
 
-    with open(file, 'w') as f:
+    with open(_file, 'w') as f:
         f.write(header)
         for vendor in vendors:
             vend_count = vendor['vend_count']
@@ -125,22 +125,23 @@ def vends_reporter(date=None, _from=None, to=None):
 
     return file_name
 
-def send_report(request, file):
+def send_report(_file):
     # Send email
-    url = request.build_absolute_uri()
-    requests.get(settings.MESSAGING_URL, params={
+    response = requests.get(settings.MESSAGING_URL, params={
         'subject': 'Test Subject',
         'message': 'Test Message',
         'sender': 'incisiaappmailer@gmail.com',
         'recipients': ['alwaysdeone@gmail.com'],
-        'file': url + file,
+        'file': _file,
     })
+
+    return response
 
 REPORT_HANDLERS = {
     'vends': vends_reporter,
 }
 
-def create_and_send_report(request, service, date=None, _from=None, to=None):
+def create_report(host, service, date=None, _from=None, to=None):
     report = REPORT_HANDLERS[service]
 
     if date:
@@ -148,10 +149,8 @@ def create_and_send_report(request, service, date=None, _from=None, to=None):
     else:
         file_name = report(_from=_from, to=to)
 
-    # print request.build_absolute_uri()
-    print settings.STATIC_URL
-    print file_name
-    # send_report(request, file_name)
+    _file = '%s%s%s%s%s' % ('http://', host, settings.STATIC_URL, 'files/', file_name)
+    return _file
 
 def get_collection(collection_name):
     client = MongoClient()
