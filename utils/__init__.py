@@ -49,9 +49,9 @@ def create_file_name(service, date=None, _from=None, to=None):
         file_name += ''.join(['%s-' % value for value in date.values()])[:-1]
     else:
         file_name += '_'
-        file_name += ''.join(['%s-' % v for v in _from.split('-')[::-1]])[:-1]
+        file_name += ''.join(['%s-' % v for v in _from.split('-')])[:-1]
         file_name += '_to_'
-        file_name += ''.join(['%s-' % v for v in to.split('-')[::-1]])[:-1]
+        file_name += ''.join(['%s-' % v for v in to.split('-')])[:-1]
 
     file_name += '.csv'
     return file_name
