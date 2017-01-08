@@ -2,7 +2,7 @@ from django.http import JsonResponse
 from django.http import HttpResponseServerError
 from django.utils import timezone
 
-from utils import create_report, send_report, order_date, order_stringify_date
+from utils import create_report, send_report
 
 from datetime import timedelta
 from collections import OrderedDict

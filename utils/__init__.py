@@ -8,39 +8,6 @@ import requests
 import os
 
 from decimal import Decimal
-from collections import OrderedDict
-
-def order_stringify_date(date):
-    year, month, day = tuple(date.split('-'))
-    dct = order_date(year, month, day)
-    return ''.join(['%s-' % value for value in reversed(dct.values())])[:-1]
-
-def order_date(year=None, month=None, day=None):
-    if year:
-        year = int(year)
-    if month:
-        month = int(month)
-    if day:
-        day = int(day)
-
-    date = OrderedDict()
-
-    # URL contains only year
-    if month is None and day is None and year:
-        date['year'] = year
-
-    # URL contains year and month
-    elif day is None and month and year:
-        date['month'] = month
-        date['year'] = year
-
-    # URL contains year, month and day
-    elif year and month and day:
-        date['day'] = day
-        date['month'] = month
-        date['year'] = year
-
-    return date
 
 def create_file_name(service, date=None, _from=None, to=None):
     file_name = service
