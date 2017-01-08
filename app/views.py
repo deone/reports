@@ -27,26 +27,19 @@ def get_report(request, service, year=None, month=None, day=None):
         date['month'] = parts[1]
         date['year'] = parts[2]
 
-    print date
-
     _file = create_report(request.get_host(), service, date)
     response = send_report(service, _file)
 
     return error_or_success_message(response.status_code, response.reason)
 
-""" def get_report_by_date_range(request, service, _from=None, to=None, days=None):
-    print _from
+def get_report_by_date_range(request, service, _from=None, to=None, days=None):
     if days is not None:
         now = timezone.now()
         start = now - timedelta(days=int(days))
-        _from = '%s-%s-%s' % (start.year, start.month, start.day)
-        to = '%s-%s-%s' % (now.year, now.month, now.day)
-    else:
-        _from = order_stringify_date(_from)
-        to = order_stringify_date(to)
+        _from = '%s-%s-%s' % (start.day, start.month, start.year)
+        to = '%s-%s-%s' % (now.day, now.month, now.year)
 
-    print _from
     _file = create_report(request.get_host(), service, _from=_from, to=to)
     response = send_report(service, _file)
 
-    return error_or_success_message(response.status_code, response.reason) """
+    return error_or_success_message(response.status_code, response.reason)
