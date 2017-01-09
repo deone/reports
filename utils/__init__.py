@@ -36,60 +36,61 @@ def vends_reporter(date=None, _from=None, to=None):
     vendors = response['results']['vendors']
     voucher_values = response['results']['voucher_values']
 
-    # Add more key/value pairs to vendor objects
+    if vendors:
+        # Add more key/value pairs to vendor objects
 
-    # Add total vend value
-    [vendor.update({
-        'total_vend_value': sum([vc['value'] * vc['count'] for vc in vendor['vend_count']])
-    }) for vendor in vendors]
+        # Add total vend value
+        [vendor.update({
+            'total_vend_value': sum([vc['value'] * vc['count'] for vc in vendor['vend_count']])
+        }) for vendor in vendors]
 
-    # Add total vend count
-    [vendor.update({
-        'total_vend_count': sum([vc['count'] for vc in vendor['vend_count']])
-    }) for vendor in vendors]
+        # Add total vend count
+        [vendor.update({
+            'total_vend_count': sum([vc['count'] for vc in vendor['vend_count']])
+        }) for vendor in vendors]
 
-    header = '%s%s%s%s%s%s%s%s\n' % (
-        'Vendor Name,',
-        'Vendor Company,',
-        ','.join([str(value) for value in voucher_values]),
-        ',Total Vend Count',
-        ',Total Vend Value (GHS)',
-        ',Bonus',
-        ',Commission',
-        ',Net Revenue'
-        )
+        header = '%s%s%s%s%s%s%s%s\n' % (
+            'Vendor Name,',
+            'Vendor Company,',
+            ','.join([str(value) for value in voucher_values]),
+            ',Total Vend Count',
+            ',Total Vend Value (GHS)',
+            ',Bonus',
+            ',Commission',
+            ',Net Revenue'
+            )
 
-    _file = os.path.join(settings.MEDIA_ROOT, file_name)
+        _file = os.path.join(settings.MEDIA_ROOT, file_name)
 
-    with open(_file, 'w') as f:
-        f.write(header)
-        for vendor in vendors:
-            vend_count = vendor['vend_count']
-            vend_count_string = ','.join([str(elem['count']) for elem in vend_count])
+        with open(_file, 'w') as f:
+            f.write(header)
+            for vendor in vendors:
+                vend_count = vendor['vend_count']
+                vend_count_string = ','.join([str(elem['count']) for elem in vend_count])
 
-            sales = Decimal(vendor['total_vend_value'])
-            bonus = revenue = sales / 2
-            commission = (sales - bonus) / 10
-            net_revenue = revenue - commission
+                sales = Decimal(vendor['total_vend_value'])
+                bonus = revenue = sales / 2
+                commission = (sales - bonus) / 10
+                net_revenue = revenue - commission
 
-            line = '%s,%s,%s,%s,%s,%s,%s,%s\n' % (
-                vendor['name'],
-                vendor['company_name'],
-                vend_count_string,
-                vendor['total_vend_count'],
-                str(sales),
-                str(bonus),
-                str(commission),
-                str(net_revenue)
-                )
+                line = '%s,%s,%s,%s,%s,%s,%s,%s\n' % (
+                    vendor['name'],
+                    vendor['company_name'],
+                    vend_count_string,
+                    vendor['total_vend_count'],
+                    str(sales),
+                    str(bonus),
+                    str(commission),
+                    str(net_revenue)
+                    )
 
-            f.write(line)
+                f.write(line)
 
-    # Insert into database
-    # vendor_collection = get_collection('vendors')
-    # result = vendor_collection.insert_many(vendors)
+        # Insert into database
+        # vendor_collection = get_collection('vendors')
+        # result = vendor_collection.insert_many(vendors)
 
-    return file_name
+        return file_name
 
 def send_report(service, _file):
     subject_and_body = settings.EMAIL_SUBJECT_AND_BODY[service]
@@ -119,8 +120,9 @@ def create_report(host, service, date=None, _from=None, to=None):
     else:
         file_name = report(_from=_from, to=to)
 
-    _file = '%s%s%s%s' % ('http://', host, settings.MEDIA_URL, file_name)
-    return _file
+    if file_name:
+        _file = '%s%s%s%s' % ('http://', host, settings.MEDIA_URL, file_name)
+        return _file
 
 def get_collection(collection_name):
     client = MongoClient()
