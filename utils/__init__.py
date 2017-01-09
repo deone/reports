@@ -20,7 +20,6 @@ def create_file_name(service, date=None, _from=None, to=None):
         file_name += '_to_'
         file_name += ''.join(['%s-' % v for v in to.split('-')])[:-1]
 
-    file_name += '.csv'
     return file_name
 
 def vends_reporter(date=None, _from=None, to=None):
@@ -28,10 +27,10 @@ def vends_reporter(date=None, _from=None, to=None):
 
     if date:
         response = requests.get(url, params=date).json()
-        file_name = create_file_name('vends', date=date)
+        file_name = '%s.%s' % (create_file_name('vends', date=date), 'csv')
     else:
         response = requests.get(url, params={'from': _from, 'to': to}).json()
-        file_name = create_file_name('vends', _from=_from, to=to)
+        file_name = '%s.%s' % (create_file_name('vends', _from=_from, to=to), 'csv')
 
     vendors = response['results']['vendors']
     voucher_values = response['results']['voucher_values']
@@ -92,7 +91,7 @@ def vends_reporter(date=None, _from=None, to=None):
 
         return file_name
 
-def send_report(service, _file):
+def send_report(service, _file, date=None, _from=None, to=None):
     subject_and_body = settings.EMAIL_SUBJECT_AND_BODY[service]
     subject = subject_and_body['subject']
     body = subject_and_body['body']

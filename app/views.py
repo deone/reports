@@ -42,7 +42,7 @@ def get_report(request, service, year=None, month=None, day=None, when=None):
 
     _file = create_report(request.get_host(), service, date)
     if _file is not None:
-        response = send_report(service, _file)
+        response = send_report(service, _file, date=date)
         return error_or_success_message(response.status_code, response.reason)
     else:
         return JsonResponse({'status': 'error', 'message': 'invalid date'})
