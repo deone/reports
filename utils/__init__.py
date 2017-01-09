@@ -9,7 +9,7 @@ import os
 
 from decimal import Decimal
 
-def create_file_name(service, date=None, _from=None, to=None):
+def stringify_service_and_dates(service=None, date=None, _from=None, to=None):
     file_name = service
     if date:
         file_name += '_'
@@ -27,10 +27,10 @@ def vends_reporter(date=None, _from=None, to=None):
 
     if date:
         response = requests.get(url, params=date).json()
-        file_name = '%s.%s' % (create_file_name('vends', date=date), 'csv')
+        file_name = '%s.%s' % (stringify_service_and_dates(service='vends', date=date), 'csv')
     else:
         response = requests.get(url, params={'from': _from, 'to': to}).json()
-        file_name = '%s.%s' % (create_file_name('vends', _from=_from, to=to), 'csv')
+        file_name = '%s.%s' % (stringify_service_and_dates(service='vends', _from=_from, to=to), 'csv')
 
     vendors = response['results']['vendors']
     voucher_values = response['results']['voucher_values']
