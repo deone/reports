@@ -56,7 +56,7 @@ def get_report_by_date_range(request, service, _from=None, to=None, days=None):
 
     _file = create_report(request.get_host(), service, _from=_from, to=to)
     if _file is not None:
-        response = send_report(service, _file)
+        response = send_report(service, _file, _from=_from, to=to)
         return error_or_success_message(response.status_code, response.reason)
     else:
         return JsonResponse({'status': 'error', 'message': 'invalid date'})

@@ -9,18 +9,30 @@ import os
 
 from decimal import Decimal
 
-def stringify_service_and_dates(service=None, date=None, _from=None, to=None):
-    file_name = service
-    if date:
-        file_name += '_'
-        file_name += ''.join(['%s-' % value for value in date.values()])[:-1]
-    else:
-        file_name += '_'
-        file_name += ''.join(['%s-' % v for v in _from.split('-')])[:-1]
-        file_name += '_to_'
-        file_name += ''.join(['%s-' % v for v in to.split('-')])[:-1]
+def stringify_date(date_list):
+    return ''.join(['%s-' % elem for elem in date_list])[:-1]
 
-    return file_name
+def stringify_service_and_dates(service=None, date=None, _from=None, to=None):
+    if service:
+        string = service
+    else:
+        string = ''
+
+    if date:
+        if service:
+            string += '_'
+        string += stringify_date(date.values())
+    else:
+        if service:
+            string += '_'
+        string += stringify_date(_from.split('-'))
+        if service:
+            string += '_to_'
+        else:
+            string += ' To '
+        string += stringify_date(to.split('-'))
+
+    return string
 
 def vends_reporter(date=None, _from=None, to=None):
     url = settings.VENDOR_VENDS_URL
@@ -96,9 +108,11 @@ def send_report(service, _file, date=None, _from=None, to=None):
     subject = subject_and_body['subject']
     body = subject_and_body['body']
 
+    period = stringify_service_and_dates(service=None, date=date, _from=_from, to=to)
+
     # Send email
     response = requests.get(settings.MESSAGING_URL, params={
-        'subject': subject,
+        'subject': '%s: %s' % (subject, period),
         'message': body,
         'sender': settings.DEFAULT_FROM_EMAIL,
         'recipients': settings.TO,
