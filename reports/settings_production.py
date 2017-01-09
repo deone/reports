@@ -2,6 +2,14 @@ from settings import *
 
 DEBUG = False
 
-# Vend APIs
-VENDOR_URL = 'http://154.117.8.18:8070'
-VENDOR_VENDORS_URL = VENDOR_URL + '/vends/vendors/'
+IP = '154.117.8.18'
+ALLOWED_HOSTS = [IP]
+
+# APIs
+
+# vends
+VENDOR_URL = 'http://' + IP + ':8070'
+VENDOR_VENDS_URL = VENDOR_URL + '/vends'
+
+# messaging
+MESSAGING_URL = 'http://' + IP + ':7710'
