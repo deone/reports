@@ -13,8 +13,21 @@ def error_or_success_message(status_code, reason):
     else:
         return JsonResponse({'status': 'ok'})
 
-def get_report(request, service, year=None, month=None, day=None):
+def get_report(request, service, year=None, month=None, day=None, when=None):
     date = OrderedDict()
+
+    if when:
+        now = timezone.now()
+        if when == 'today':
+            date['day'] = now.day
+            date['month'] = now.month
+            date['year'] = now.year
+        elif when == 'yesterday':
+            report_date = now - timedelta(days=1)
+            date['day'] = report_date.day
+            date['month'] = report_date.month
+            date['year'] = report_date.year
+
     if year is not None:
         date['year'] = int(year)
     elif month is not None:
