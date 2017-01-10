@@ -14,7 +14,7 @@ VENDOR_VENDS_URL = VENDOR_URL + '/vends'
 # messaging
 MESSAGING_URL = 'http://' + IP + ':7710'
 TO = [
-    'alwaysdeone@gmail.com',
+    'dayo@incisia.com',
     'georged@spectrawireless.com',
     'sdarko@spectrawireless.com',
     'cadzisu@spectrawireless.com'
