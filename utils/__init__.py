@@ -44,8 +44,8 @@ def vends_reporter(date=None, _from=None, to=None):
         response = requests.get(url, params={'from': _from, 'to': to}).json()
         file_name = '%s.%s' % (stringify_service_and_dates(service='vends', _from=_from, to=to), 'csv')
 
-    vendors = response['results']['vendors']
-    voucher_values = response['results']['voucher_values']
+    vendors = response['vendors']
+    voucher_values = response['voucher_values']
 
     if vendors:
         # Add more key/value pairs to vendor objects
